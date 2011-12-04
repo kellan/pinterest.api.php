@@ -29,7 +29,7 @@ Notably missing is a `pin` method that simulates the pinmarklet.  (that said I h
 
 ==
 
-Write now the `upload_pin` method only takes the funny curl style file descriptors.  It would be straightforward to make it smarter, but I haven't need it for my script.  Call it like so
+At the moment the `upload_pin` method only takes the funny curl style file descriptors.  It would be straightforward to make it smarter, but I haven't need it for my script.  Call it like so
 
     $resp = $p->upload_pin(array(
         'board' => $board_id,
