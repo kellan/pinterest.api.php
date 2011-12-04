@@ -121,9 +121,9 @@
             }
             
             foreach ($params as $k => $v){
-			    $encoded_params[] = urlencode($k).'='.urlencode($v);
-		    }
-		    
+                $encoded_params[] = urlencode($k).'='.urlencode($v);
+            }
+            
             $request_url = $this->base_url . $endpoint . "?" . implode('&', $encoded_params);
             
             curl_setopt($ch, CURLOPT_URL, $request_url);
@@ -134,28 +134,29 @@
             
             return $resp;
         }
-		
         
-		static function params_filter($params, $defaults) {
-    		foreach ($defaults as $k => $v) {
-    		    
-    			if (!isset($params[$k])) {
-    			    
+        
+        static function params_filter($params, $defaults) {
+            
+            foreach ($defaults as $k => $v) {
+                
+                if (!isset($params[$k])) {
+                    
                     if ($v === self::REQUIRED) {
-    				    
-    				    $trace = debug_backtrace();
-    					$function = $trace[1]['function'];
-    					$caller = $trace[2]['function'].' in '.$trace[2]['file'].':'.$trace[2]['line'];
-    					trigger_error(self::REQUIRED . ": $k (caller was $caller)");
-    				
-    				} else {
-    					$params[$k] = $v;
-    				}
-    			}
-    		}
-    		return $params;
-    	}
-    	
-    	const REQUIRED = 'arg is required';
-    	
-	} // end class Pinterest_API
+                        
+                        $trace = debug_backtrace();
+                        $function = $trace[1]['function'];
+                        $caller = $trace[2]['function'].' in '.$trace[2]['file'].':'.$trace[2]['line'];
+                        trigger_error(self::REQUIRED . ": $k (caller was $caller)");
+                    
+                    } else {
+                        $params[$k] = $v;
+                    }
+                }
+            }
+            return $params;
+        }
+        
+        const REQUIRED = 'arg is required';
+        
+    } // end class Pinterest_API
