@@ -6,7 +6,7 @@
         var $access_token;
         
         function __construct($access_token='') {
-            $this->base_url = 'https://api.pinterest.com/v1';
+            $this->base_url = 'https://api.pinterest.com/v2';
             $this->access_token = $access_token;
         }
         
@@ -18,11 +18,11 @@
             $post= array(
                 "grant_type" => 'password',
                 "scope"  => "read_write",
+                "redirect_uri" => "http://pinterest.com/about/iphone/"
             );
 
-
             $host = "https://api.pinterest.com";
-            $endpoint = "/oauth/2/access_token?client_id=$client_id&client_secret=$client_secret";
+            $endpoint = "/v2/oauth/access_token?client_id=$client_id&client_secret=$client_secret";
             $request_url = $host . $endpoint;
             curl_setopt($ch, CURLOPT_URL, $request_url);
             curl_setopt($ch, CURLOPT_POST,1);
@@ -57,6 +57,7 @@
         }
         
         function repin($params) {
+            
             $params = self::params_filter($params, array(
                 'board' => self::REQUIRED,
                 'details' => self::REQUIRED,
@@ -65,10 +66,10 @@
             
             $post = array(
                 'board' => $params['board'],
-                'details' => $params['details']
+                'details' => $params['details'],
             );
             
-            $endpoint = '/pin/' . $params['pin'] . '/repin/';
+            $endpoint = '/repin/' . $params['pin'] . '/';
             
             return $this->post($endpoint, $post);            
         }
@@ -77,6 +78,15 @@
             return $this->get('/activity/', $params);
         }
         
+		function all($params=array()) {
+		    $params = self::params_filter($params, array(
+                'limit' => 36,
+                'page' => 1
+            ));
+            
+            return $this->get('/all/', $params);
+		}
+
         function popular($params=array()) {
             $params = self::params_filter($params, array(
                 'limit' => 36,
@@ -94,6 +104,14 @@
             return $this->get('/boards/', $params);    
         }
         
+        function categories($params=array()) {
+            $params = self::params_filter($params, array(
+                'limit' => 36,
+                'page' => 1
+            ));
+            return $this->get('/boards/categories/', $params);
+        }
+        
         function post($endpoint, $post=array()) {
             $ch=curl_init();
 
@@ -102,10 +120,22 @@
                 $request_url = "$request_url?access_token=" . $this->access_token;
             }
             
+            curl_setopt($ch, CURLOPT_USERAGENT, 'Pinterest For iPhone / 1.4.3');
+            
             curl_setopt($ch, CURLOPT_URL, $request_url);
             curl_setopt($ch, CURLOPT_POST,1);
+
             curl_setopt($ch, CURLOPT_POSTFIELDS,$post);
-            curl_setopt($ch,CURLOPT_RETURNTRANSFER,1); 
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER,1); 
+            
+#            curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, 1);
+#            curl_setopt($ch, CURLOPT_PROXY, "127.0.0.1");
+#            curl_setopt($ch, CURLOPT_PROXYPORT, 8888);
+#            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+            
+        
+            
+            
             $resp=curl_exec($ch);            
             $info = curl_getinfo($ch);
             curl_close($ch);
